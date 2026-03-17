@@ -250,6 +250,7 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'power_zone'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_Login` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
