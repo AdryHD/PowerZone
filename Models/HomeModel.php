@@ -29,24 +29,11 @@ function IniciarSesionModel($correo)
         $stmt = $context->prepare("CALL sp_Login(?)");
         $stmt->bind_param('s', $correo);
         $stmt->execute();
-        $stmt->bind_result($id_usuario, $nombre, $correo, $contrasena, $id_rol);
-        $fetched = $stmt->fetch();
-        if ($fetched) {
-            $user = [
-                'id_usuario' => $id_usuario,
-                'nombre' => $nombre,
-                'correo' => $correo,
-                'contrasena' => $contrasena,
-                'id_rol' => $id_rol,
-            ];
-            $stmt->close();
-            CloseDatabase($context);
-            return $user;
-        } else {
-            $stmt->close();
-            CloseDatabase($context);
-            return null;
-        }
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        CloseDatabase($context);
+        return $user ?: null;
     } catch (Exception $e) {
         if (isset($stmt) && $stmt) $stmt->close();
         if (isset($context)) CloseDatabase($context);
