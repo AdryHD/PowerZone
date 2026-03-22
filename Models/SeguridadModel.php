@@ -1,14 +1,62 @@
 <?php
-// SeguridadModel.php — Esqueleto base estilo MN_ECC
 include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/UtilitarioModel.php";
 
 function ConsultarUsuarioModel($id_usuario)
 {
-    $context = OpenDatabase();
-    // TODO: Implementar consulta real a la base de datos
-    // Ejemplo: $stmt = $context->prepare("CALL sp_ConsultarUsuario(?)");
-    // $stmt->bind_param('i', $id_usuario);
-    // ...
-    CloseDatabase($context);
-    return null;
+    try
+    {
+        $context = OpenDatabase();
+
+        $sp = "CALL sp_ConsultarUsuario('$id_usuario')";
+        $result = $context->query($sp);
+
+        $datos = null;
+        while ($fila = $result->fetch_assoc())
+        {
+            $datos = $fila;
+        }
+
+        CloseDatabase($context);
+        return $datos;
+    }
+    catch (Exception $e)
+    {
+        return null;
+    }
+}
+
+function ActualizarPerfilModel($nombre, $correo, $id_usuario)
+{
+    try
+    {
+        $context = OpenDatabase();
+
+        $sp = "CALL sp_ActualizarPerfil('$nombre', '$correo', '$id_usuario')";
+        $result = $context->query($sp);
+
+        CloseDatabase($context);
+        return $result;
+    }
+    catch (Exception $e)
+    {
+        return false;
+    }
+}
+
+function ActualizarContrasenaModel($nuevaContrasena, $id_usuario)
+{
+    try
+    {
+        $context = OpenDatabase();
+
+        $sp = "CALL sp_ActualizarContrasena('$nuevaContrasena', '$id_usuario')";
+        $result = $context->query($sp);
+
+        CloseDatabase($context);
+        return $result;
+    }
+    catch (Exception $e)
+    {
+        return false;
+    }
 }

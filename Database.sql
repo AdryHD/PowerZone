@@ -305,6 +305,83 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarUsuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarUsuario`(
+    pIdUsuario INT
+)
+BEGIN
+    SELECT  id_usuario,
+            nombre,
+            correo,
+            estado,
+            id_rol
+    FROM    usuarios
+    WHERE   id_usuario = pIdUsuario
+    AND     estado = 1;
+END ;;
+DELIMITER ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductos` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductos`(
+)
+BEGIN
+    SELECT  id_producto,
+            id_categoria,
+            nombre,
+            descripcion,
+            precio,
+            stock,
+            talla,
+            color,
+            imagen,
+            estado,
+            CASE WHEN estado = 'activo' THEN 'Activo' ELSE 'Inactivo' END AS EstadoDescripcion
+    FROM    productos;
+END ;;
+DELIMITER ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarPerfil` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarPerfil`(
+    pNombre VARCHAR(100),
+    pCorreo VARCHAR(100),
+    pIdUsuario INT
+)
+BEGIN
+    UPDATE  usuarios
+    SET     nombre = pNombre,
+            correo = pCorreo
+    WHERE   id_usuario = pIdUsuario;
+END ;;
+DELIMITER ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarContrasena` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarContrasena`(
+    pNuevaContrasena VARCHAR(255),
+    pIdUsuario INT
+)
+BEGIN
+    UPDATE  usuarios
+    SET     contrasena = pNuevaContrasena
+    WHERE   id_usuario = pIdUsuario;
+END ;;
+DELIMITER ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
