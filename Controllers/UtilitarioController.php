@@ -20,7 +20,7 @@ function EnviarCorreo($asunto, $contenido, $destinatario)
     require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
     $correoSalida     = "ahernandez10645@ufide.ac.cr";
-    $contrasenaSalida = "Detrasdelsol001";
+    $contrasenaSalida = "";
 
     if ($contrasenaSalida == "") {
         return true; // Simulación de envío exitoso

@@ -42,6 +42,12 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                         . '<span>' . htmlspecialchars($_POST["Mensaje"], ENT_QUOTES, 'UTF-8') . '</span>'
                         . '</div>';
                 }
+                if (isset($_GET["msg"]) && $_GET["msg"] === "agregado") {
+                    echo '<div class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">'
+                        . '<i class="lni lni-checkmark-circle"></i>'
+                        . '<span>Producto agregado correctamente.</span>'
+                        . '</div>';
+                }
                 ?>
 
                 <div class="card shadow border-0">
@@ -59,7 +65,7 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+                            <table id="tProductos" class="table table-hover align-middle mb-0">
                                 <thead style="background:#f8f9fa;">
                                     <tr>
                                         <th class="px-4 py-3">#</th>
@@ -154,7 +160,7 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
 <div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <form method="POST" action="" id="formAgregarProducto" novalidate>
+            <form method="POST" action="" id="formAgregarProducto" enctype="multipart/form-data" novalidate>
                 <div class="modal-header" style="background:#2ECC71;">
                     <h5 class="modal-title text-white fw-bold" id="modalAgregarProductoLabel">
                         <i class="lni lni-plus me-2"></i>Agregar Nuevo Producto
@@ -211,8 +217,16 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-semibold">URL de Imagen</label>
-                            <input type="text" class="form-control" name="imagen" placeholder="/G4_AmbienteWeb/Views/assets/images/products/imagen.png" maxlength="255">
+                            <label class="form-label fw-semibold">Imagen <span class="text-danger">*</span></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <label for="ImagenProducto" class="btn fw-semibold mb-0"
+                                    style="background:#2ECC71; color:#fff; border:none; cursor:pointer; white-space:nowrap;">
+                                    <i class="lni lni-upload me-1"></i>Seleccionar archivo
+                                </label>
+                                <span id="nombreArchivo" class="text-muted" style="font-size:.9rem;">Ningún archivo seleccionado</span>
+                            </div>
+                            <input type="file" class="d-none" id="ImagenProducto" name="ImagenProducto" accept=".png,.jpg,.jpeg" required>
+                            <div class="invalid-feedback d-block" id="feedbackImagen" style="display:none!important;"></div>
                         </div>
 
                     </div>
@@ -233,7 +247,53 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('formAgregarProducto');
     if (!form) return;
+
+    // Mostrar nombre del archivo seleccionado
+    const inputFile    = document.getElementById('ImagenProducto');
+    const nombreSpan   = document.getElementById('nombreArchivo');
+    const feedbackImg  = document.getElementById('feedbackImagen');
+
+    inputFile.addEventListener('change', function () {
+        if (this.files && this.files.length > 0) {
+            nombreSpan.textContent = this.files[0].name;
+            nombreSpan.style.color = '#1A8A4A';
+            feedbackImg.style.setProperty('display', 'none', 'important');
+        } else {
+            nombreSpan.textContent = 'Ningún archivo seleccionado';
+            nombreSpan.style.color = '';
+        }
+    });
+
+    // Precio: formatear a 2 decimales al salir del campo
+    const precioInput = form.querySelector('input[name="precio"]');
+    if (precioInput) {
+        precioInput.addEventListener('blur', function () {
+            const val = parseFloat(this.value);
+            if (!isNaN(val) && val >= 0) {
+                this.value = val.toFixed(2);
+            }
+        });
+    }
+
+    // Stock: solo enteros positivos
+    const stockInput = form.querySelector('input[name="stock"]');
+    if (stockInput) {
+        stockInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+
     form.addEventListener('submit', function (e) {
+        // Validar imagen manualmente (input hidden no activa was-validated)
+        if (!inputFile.files || inputFile.files.length === 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            feedbackImg.textContent = 'Seleccione una imagen (PNG o JPG).';
+            feedbackImg.style.setProperty('display', 'block', 'important');
+            form.classList.add('was-validated');
+            return;
+        }
+
         if (!form.checkValidity()) {
             e.preventDefault();
             e.stopPropagation();
@@ -242,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script src="../funciones/consultarProductos.js"></script>
 
 </body>
 

@@ -53,7 +53,7 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
             <p class="lead mb-4" style="font-size: 1.2rem; color: #CCCCCC; line-height: 1.6;">Descubre las mejores marcas en ropa y zapatos deportivos. Envío gratis en compras mayores a $50.</p>
             <div class="d-flex gap-3 flex-wrap">
               <a href="#productos" class="btn btn-success btn-lg" style="background: linear-gradient(135deg, #2ECC71 0%, #27a654 100%); border: none; font-weight: 600; padding: 12px 28px;">
-                <i class="lni lni-shopping-basket me-2"></i>Ver Productos
+                <i class="lni lni-shopping-basket me-2"></i>Productos Destacados
               </a>
               <a href="#categorias" class="btn btn-outline-light btn-lg" style="border: 2px solid white; font-weight: 600; padding: 10px 28px; transition: all 0.3s ease;">
                 <i class="lni lni-list me-2"></i>Categorías
@@ -151,14 +151,20 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
                     <p class="card-text" style="color: #666666; font-size: 0.95rem;">
                       <?php echo htmlspecialchars($producto['descripcion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
                     </p>
-                    <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
                       <span class="fs-5 fw-bold" style="color: #2ECC71;">
                         ₡<?php echo number_format((float)$producto['precio'], 2); ?>
                       </span>
-                      <button class="btn btn-sm" style="background:#111;border:none;color:#fff;border-radius:10px;padding:8px 18px;font-size:0.95rem;">
-                        <i class="lni lni-cart me-1"></i>Agregar
-                      </button>
+                      <small style="color:#999;">Stock: <?php echo (int)$producto['stock']; ?></small>
                     </div>
+                    <button class="btn w-100 fw-semibold"
+                            style="background:#111;border:none;color:#fff;border-radius:10px;padding:10px;font-size:0.9rem;transition:opacity .2s;"
+                            <?php echo (int)$producto['stock'] === 0 ? 'disabled' : ''; ?>
+                            onclick="agregarAlCarrito(<?php echo (int)$producto['id_producto']; ?>, '<?php echo htmlspecialchars(addslashes($producto['nombre'])); ?>', this)"
+                            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                      <i class="lni lni-cart me-1"></i>
+                      <?php echo (int)$producto['stock'] === 0 ? 'Agotado' : 'Agregar al carrito'; ?>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -182,7 +188,7 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
           <div class="card-body p-5 text-center" style="background: linear-gradient(135deg, #2ECC71 0%, #27a654 100%);">
             <h2 class="display-5 fw-bold mb-3" style="color: white; font-size: 2.5rem;">¡Ofertas Especiales del Mes!</h2>
             <p class="lead mb-4" style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 500;">Aprovecha hasta 50% de descuento en productos seleccionados</p>
-            <a href="#" class="btn btn-dark btn-lg" style="background: #1A1A1A; border: none; color: white; font-weight: 600; padding: 14px 32px; transition: all 0.3s ease;">
+            <a href="/G4_AmbienteWeb/Views/Producto/tienda.php?cat=99" class="btn btn-dark btn-lg" style="background: #1A1A1A; border: none; color: white; font-weight: 600; padding: 14px 32px; transition: all 0.3s ease;">
               <i class="lni lni-offer me-2"></i>Ver Todas las Ofertas
             </a>
           </div>
@@ -199,6 +205,18 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
       window.addEventListener('popstate', function() {
         history.pushState(null, '', location.href);
       });
+
+      function agregarAlCarrito(idProducto, nombre, btn) {
+          const original = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<i class="lni lni-checkmark-circle me-1"></i>Agregado';
+          btn.style.background = 'linear-gradient(135deg,#27a654,#1a7a3f)';
+          setTimeout(() => {
+              btn.disabled = false;
+              btn.innerHTML = original;
+              btn.style.background = '#111';
+          }, 1500);
+      }
     </script>
 
 </body>

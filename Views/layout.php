@@ -57,7 +57,7 @@ HTML;
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#ofertas" style="color: white; font-weight: 600;">
+              <a class="nav-link" href="{$base}/Views/Producto/tienda.php?cat=99" style="color: white; font-weight: 600;">
                 <i class="lni lni-offer me-1"></i>Ofertas
               </a>
             </li>
@@ -137,13 +137,17 @@ echo
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="stylesheet" href="../assets/css/custom.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.bootstrap5.css" />
   </head>';
 }
 
 function MostrarJS(){
 echo 
 '    <script src="../assets/jss/jquery-3.7.1.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
      <script src="../assets/jss/bootstrap.bundle.min.js"></script>
      <script src="../assets/jss/main.js"></script>
-     <script src="../funciones/cerrarSesion.js"></script>';
+     <script src="../funciones/cerrarSesion.js"></script>
+     <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
+     <script src="https://cdn.datatables.net/2.3.7/js/dataTables.bootstrap5.js"></script>';
 }

@@ -25,13 +25,24 @@ if (isset($_POST["btnAgregarProducto"])) {
     $stock       = (int) $_POST["stock"];
     $talla       = trim($_POST["talla"]);
     $color       = trim($_POST["color"]);
-    $imagen      = trim($_POST["imagen"]);
+
+    $imagen = '';
+    if (!empty($_FILES["ImagenProducto"]["name"]) && $_FILES["ImagenProducto"]["error"] === UPLOAD_ERR_OK) {
+        $nombreArchivo = basename($_FILES["ImagenProducto"]["name"]);
+        $imagen        = '/G4_AmbienteWeb/Views/assets/images/products/' . $nombreArchivo;
+        $destino       = $_SERVER["DOCUMENT_ROOT"] . $imagen;
+        if (!copy($_FILES["ImagenProducto"]["tmp_name"], $destino)) {
+            $_POST["Mensaje"]     = "Error al guardar la imagen. Verifique permisos de la carpeta.";
+            $_POST["TipoMensaje"] = "danger";
+            return;
+        }
+    }
 
     $result = AgregarProductoModel($idCategoria, $nombre, $descripcion, $precio, $stock, $talla, $color, $imagen);
 
     if ($result) {
-        $_POST["Mensaje"]     = "Producto agregado correctamente.";
-        $_POST["TipoMensaje"] = "success";
+        header("Location: /G4_AmbienteWeb/Views/Producto/consultarProductos.php?msg=agregado");
+        exit;
     } else {
         $_POST["Mensaje"]     = "Error al agregar el producto. Intente de nuevo.";
         $_POST["TipoMensaje"] = "danger";

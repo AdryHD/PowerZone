@@ -246,7 +246,7 @@ $hayProductos = $mostrarOfertas
 
                     <!-- Botón agregar al carrito -->
                     <button class="btn w-100 fw-semibold"
-                            style="background:linear-gradient(135deg,#2ECC71,#27a654);border:none;color:#fff;border-radius:10px;padding:10px;font-size:0.9rem;transition:opacity .2s;"
+                            style="background:#111;border:none;color:#fff;border-radius:10px;padding:10px;font-size:0.9rem;transition:opacity .2s;"
                             <?php echo (int)$producto['stock'] === 0 ? 'disabled' : ''; ?>
                             onclick="agregarAlCarrito(<?php echo (int)$producto['id_producto']; ?>, '<?php echo htmlspecialchars(addslashes($producto['nombre'])); ?>', this)"
                             onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
@@ -280,7 +280,7 @@ function agregarAlCarrito(idProducto, nombre, btn) {
     setTimeout(() => {
         btn.disabled = false;
         btn.innerHTML = original;
-        btn.style.background = 'linear-gradient(135deg,#2ECC71,#27a654)';
+        btn.style.background = '#111';
     }, 1500);
 
     // TODO: llamada AJAX al endpoint de carrito cuando esté implementado
