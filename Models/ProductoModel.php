@@ -50,15 +50,12 @@ function CambiarEstadoProductoModel($idProducto)
     try
     {
         $context = OpenDatabase();
-        $stmt    = $context->prepare(
-            "UPDATE productos SET estado = IF(estado='activo','inactivo','activo') WHERE id_producto = ?"
-        );
-        $stmt->bind_param("i", $idProducto);
-        $stmt->execute();
-        $ok = $stmt->affected_rows > 0;
-        $stmt->close();
+
+        $sp = "CALL sp_CambiarEstadoProducto('$idProducto')";
+        $result = $context->query($sp);
+
         CloseDatabase($context);
-        return $ok;
+        return $result;
     }
     catch (Exception $e)
     {
@@ -71,15 +68,54 @@ function ToggleOfertaModel($idProducto)
     try
     {
         $context = OpenDatabase();
-        $stmt    = $context->prepare(
-            "UPDATE productos SET en_oferta = IF(en_oferta=1,0,1) WHERE id_producto = ?"
-        );
-        $stmt->bind_param("i", $idProducto);
-        $stmt->execute();
-        $ok = $stmt->affected_rows > 0;
-        $stmt->close();
+
+        $sp = "CALL sp_ToggleOferta('$idProducto')";
+        $result = $context->query($sp);
+
         CloseDatabase($context);
-        return $ok;
+        return $result;
+    }
+    catch (Exception $e)
+    {
+        return false;
+    }
+}
+
+function ConsultarProductoModel($idProducto)
+{
+    try
+    {
+        $context = OpenDatabase();
+
+        $sp = "CALL sp_ConsultarProducto('$idProducto')";
+        $result = $context->query($sp);
+
+        $datos = null;
+        while ($fila = $result->fetch_assoc())
+        {
+            $datos = $fila;
+        }
+
+        CloseDatabase($context);
+        return $datos;
+    }
+    catch (Exception $e)
+    {
+        return null;
+    }
+}
+
+function ActualizarProductoModel($idProducto, $idCategoria, $nombre, $descripcion, $precio, $stock, $talla, $color, $imagen)
+{
+    try
+    {
+        $context = OpenDatabase();
+
+        $sp = "CALL sp_ActualizarProducto('$idProducto', '$idCategoria', '$nombre', '$descripcion', '$precio', '$stock', '$talla', '$color', '$imagen')";
+        $result = $context->query($sp);
+
+        CloseDatabase($context);
+        return $result;
     }
     catch (Exception $e)
     {
@@ -93,17 +129,11 @@ function AgregarProductoModel($idCategoria, $nombre, $descripcion, $precio, $sto
     {
         $context = OpenDatabase();
 
-        $stmt = $context->prepare(
-            "INSERT INTO productos (id_categoria, nombre, descripcion, precio, stock, talla, color, imagen, estado)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'activo')"
-        );
-        $stmt->bind_param("issdisss", $idCategoria, $nombre, $descripcion, $precio, $stock, $talla, $color, $imagen);
-        $stmt->execute();
-        $ok = $stmt->affected_rows > 0;
-        $stmt->close();
+        $sp = "CALL sp_AgregarProducto('$idCategoria', '$nombre', '$descripcion', '$precio', '$stock', '$talla', '$color', '$imagen')";
+        $result = $context->query($sp);
 
         CloseDatabase($context);
-        return $ok;
+        return $result;
     }
     catch (Exception $e)
     {

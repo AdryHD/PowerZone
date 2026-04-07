@@ -239,9 +239,10 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(100) NOT NULL,
   `correo` varchar(100) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
-  `estado` bit(1) NOT NULL,
+  `estado` enum('activo','inactivo') NOT NULL DEFAULT 'activo',
   `id_rol` int(11) NOT NULL,
   `fecha_registro` datetime NOT NULL DEFAULT current_timestamp(),
+  `token_recuperacion` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `correo` (`correo`),
   KEY `id_rol` (`id_rol`),
@@ -251,10 +252,13 @@ CREATE TABLE `usuarios` (
 
 --
 -- Dumping data for table `usuarios`
+-- Usuario administrador por defecto: admin@powerzone.com / 123456
 --
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` (`cedula`, `nombre`, `correo`, `contrasena`, `estado`, `id_rol`) VALUES
+('000000000', 'Administrador', 'admin@powerzone.com', '123456', 'activo', 1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,9 +279,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_Login`(
     IN pCorreo VARCHAR(100)
 )
 BEGIN
-    SELECT id_usuario, nombre, correo, contrasena, id_rol
-    FROM usuarios
-    WHERE correo = pCorreo
+    SELECT u.id_usuario, u.nombre, u.correo, u.contrasena, u.id_rol, r.nombre AS nombre_rol
+    FROM usuarios u
+    INNER JOIN roles r ON u.id_rol = r.id_rol
+    WHERE u.correo = pCorreo
     LIMIT 1;
 END ;;
 DELIMITER ;
@@ -413,6 +418,87 @@ BEGIN
     FROM    usuarios
     WHERE   correo  = pCorreo
     AND     estado  = 'activo';
+END ;;
+DELIMITER ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_CambiarEstadoProducto` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_CambiarEstadoProducto`(
+    pIdProducto INT
+)
+BEGIN
+    UPDATE productos
+    SET    estado = CASE WHEN estado = 'activo' THEN 'inactivo' ELSE 'activo' END
+    WHERE  id_producto = pIdProducto;
+END ;;
+DELIMITER ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ToggleOferta` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ToggleOferta`(
+    pIdProducto INT
+)
+BEGIN
+    UPDATE productos
+    SET    en_oferta = CASE WHEN en_oferta = 1 THEN 0 ELSE 1 END
+    WHERE  id_producto = pIdProducto;
+END ;;
+DELIMITER ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProducto` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProducto`(
+    pIdProducto INT
+)
+BEGIN
+    SELECT id_producto, id_categoria, nombre, descripcion, precio, stock, talla, color, imagen, estado, en_oferta
+    FROM   productos
+    WHERE  id_producto = pIdProducto;
+END ;;
+DELIMITER ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarProducto` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarProducto`(
+    pIdProducto  INT,
+    pIdCategoria INT,
+    pNombre      VARCHAR(120),
+    pDescripcion TEXT,
+    pPrecio      DECIMAL(10,2),
+    pStock       INT,
+    pTalla       VARCHAR(5),
+    pColor       VARCHAR(30),
+    pImagen      VARCHAR(255)
+)
+BEGIN
+    UPDATE productos
+    SET id_categoria = pIdCategoria,
+        nombre       = pNombre,
+        descripcion  = pDescripcion,
+        precio       = pPrecio,
+        stock        = pStock,
+        talla        = pTalla,
+        color        = pColor,
+        imagen       = CASE WHEN pImagen != '' THEN pImagen ELSE imagen END
+    WHERE id_producto = pIdProducto;
+END ;;
+DELIMITER ;
+
+/*!50003 DROP PROCEDURE IF EXISTS `sp_AgregarProducto` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AgregarProducto`(
+    pIdCategoria INT,
+    pNombre VARCHAR(120),
+    pDescripcion TEXT,
+    pPrecio DECIMAL(10,2),
+    pStock INT,
+    pTalla VARCHAR(5),
+    pColor VARCHAR(30),
+    pImagen VARCHAR(255)
+)
+BEGIN
+    INSERT INTO productos (id_categoria, nombre, descripcion, precio, stock, talla, color, imagen, estado)
+    VALUES (pIdCategoria, pNombre, pDescripcion, pPrecio, pStock, pTalla, pColor, pImagen, 'activo');
 END ;;
 DELIMITER ;
 

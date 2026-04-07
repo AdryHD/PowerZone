@@ -35,11 +35,12 @@ if (isset($_POST["btnIniciarSesion"])) {
     $result = IniciarSesionModel($correoElectronico, $contrasenna);
 
     if ($result) {
-        $_SESSION["usuario_logueado"] = true;
-        $_SESSION["usuario_id"]       = $result["id_usuario"];
-        $_SESSION["usuario_nombre"]   = $result["nombre"];
-        $_SESSION["usuario_email"]    = $result["correo"];
-        $_SESSION["usuario_rol"]      = $result["id_rol"];
+        $_SESSION["usuario_logueado"]    = true;
+        $_SESSION["usuario_id"]          = $result["id_usuario"];
+        $_SESSION["usuario_nombre"]      = $result["nombre"];
+        $_SESSION["usuario_email"]       = $result["correo"];
+        $_SESSION["usuario_rol"]         = $result["id_rol"];
+        $_SESSION["usuario_nombre_rol"]  = $result["nombre_rol"];
         header("Location: /G4_AmbienteWeb/Views/Home/home.php");
         exit;
     } else {

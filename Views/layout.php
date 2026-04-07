@@ -1,22 +1,39 @@
 <?php
 
+// ── Verificación de sesión (cross-platform, sin depender de .htaccess) ──
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['usuario_logueado'])) {
+    header('Location: /G4_AmbienteWeb/Views/Home/inicio.php?error=must_login');
+    exit;
+}
+
 function MostrarNav(){
     if (session_status() == PHP_SESSION_NONE) session_start();
-    $userName = $_SESSION['usuario_nombre'] ?? null;
-    $safeName = $userName ? htmlspecialchars($userName, ENT_QUOTES, 'UTF-8') : '';
+    $userName    = $_SESSION['usuario_nombre']     ?? null;
+    $nombreRol   = $_SESSION['usuario_nombre_rol'] ?? '';
+    $safeName    = $userName  ? htmlspecialchars($userName,  ENT_QUOTES, 'UTF-8') : '';
+    $safeRol     = $nombreRol ? htmlspecialchars($nombreRol, ENT_QUOTES, 'UTF-8') : '';
 
     // Rutas absolutas para que funcionen desde cualquier ubicación
     $base = '/G4_AmbienteWeb';
 
+    $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 1;
+    $gestionProductos = $esAdmin
+        ? "<li><a class=\"dropdown-item\" href=\"{$base}/Views/Producto/consultarProductos.php\"><i class=\"lni lni-shopping-basket me-2\"></i>Gestión Productos</a></li>"
+        : '';
+
     $userMenu = $userName ? <<<HTML
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" style="color: white; font-weight: 600;">
-                <i class="lni lni-user me-1"></i>{$safeName}
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" style="color: white; font-weight: 600; line-height: 1.2;">
+                <i class="lni lni-user me-1"></i>{$safeName}<br>
+                <small style="font-size:0.7rem; font-weight:400; opacity:0.85;">{$safeRol}</small>
               </a>
               <ul class="dropdown-menu dropdown-menu-end" style="border-radius: 10px; border: 2px solid #2ECC71; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin-top: 10px;">
                 <li><a class="dropdown-item" href="{$base}/Views/Seguridad/cambiarPerfil.php"><i class="lni lni-user me-2"></i>Cambiar Perfil</a></li>
                 <li><a class="dropdown-item" href="{$base}/Views/Seguridad/cambiarAcceso.php"><i class="lni lni-lock me-2"></i>Cambiar Contraseña</a></li>
-                <li><a class="dropdown-item" href="{$base}/Views/Producto/consultarProductos.php"><i class="lni lni-shopping-basket me-2"></i>Gestión Productos</a></li>
+                {$gestionProductos}
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" onclick="CerrarSesion(); return false;"><i class="lni lni-exit me-2"></i>Cerrar Sesión</a></li>
               </ul>

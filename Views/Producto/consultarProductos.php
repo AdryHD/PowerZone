@@ -48,6 +48,12 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                         . '<span>Producto agregado correctamente.</span>'
                         . '</div>';
                 }
+                if (isset($_GET["msg"]) && $_GET["msg"] === "actualizado") {
+                    echo '<div class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">'
+                        . '<i class="lni lni-checkmark-circle"></i>'
+                        . '<span>Producto actualizado correctamente.</span>'
+                        . '</div>';
+                }
                 ?>
 
                 <div class="card shadow border-0">
@@ -111,6 +117,13 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                                             <td>' . $ofertaBadge . '</td>
                                             <td>' . $imagen . '</td>
                                             <td class="text-center">
+                                                <a href="' . ($esActivo ? '/G4_AmbienteWeb/Views/Producto/actualizarProducto.php?id=' . $producto['id_producto'] : '#') . '"
+                                                   class="btn btn-sm fw-semibold me-1' . ($esActivo ? '' : ' disabled') . '"
+                                                   style="' . ($esActivo ? 'background:#e8f4fd; color:#1a6ebd; border:1px solid #90c4f0;' : 'background:#f0f0f0; color:#aaa; border:1px solid #ccc; pointer-events:none;') . '"
+                                                   title="' . ($esActivo ? 'Editar producto' : 'Activa el producto para poder editarlo') . '"
+                                                   ' . ($esActivo ? '' : 'tabindex="-1" aria-disabled="true"') . '>
+                                                    <i class="lni lni-pencil-alt me-1"></i>Editar
+                                                </a>
                                                 <form action="" method="POST" style="display:inline;">
                                                     <input type="hidden" name="id_producto" value="' . $producto['id_producto'] . '">
                                                     <button name="btnCambiarEstado" type="submit"
@@ -125,9 +138,10 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                                                     <input type="hidden" name="en_oferta_actual" value="' . ($enOferta ? '1' : '0') . '">
                                                     <button name="btnToggleOferta" type="submit"
                                                         class="btn btn-sm fw-semibold"
-                                                        style="background:' . ($enOferta ? '#fff3e0' : '#fff8e1') . '; color:#e67e22; border:1px solid #f39c12;"
-                                                        title="' . ($enOferta ? 'Quitar de oferta' : 'Poner en oferta') . '">
-                                                        <i class="lni lni-offer me-1"></i>' . ($enOferta ? 'Quitar oferta' : 'En oferta') . '
+                                                        style="' . ($esActivo ? 'background:' . ($enOferta ? '#fff3e0' : '#fff8e1') . '; color:#e67e22; border:1px solid #f39c12;' : 'background:#f0f0f0; color:#aaa; border:1px solid #ccc;') . '"
+                                                        title="' . ($esActivo ? ($enOferta ? 'Quitar de oferta' : 'Poner en oferta') : 'Activa el producto para gestionar ofertas') . '"
+                                                        ' . ($esActivo ? '' : 'disabled') . '>
+                                                        <i class="lni lni-offer me-1"></i>' . ($enOferta ? 'Sin oferta' : 'En oferta') . '
                                                     </button>
                                                 </form>
                                             </td>
@@ -243,65 +257,7 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
 </div>
 <?php endif; ?>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('formAgregarProducto');
-    if (!form) return;
-
-    // Mostrar nombre del archivo seleccionado
-    const inputFile    = document.getElementById('ImagenProducto');
-    const nombreSpan   = document.getElementById('nombreArchivo');
-    const feedbackImg  = document.getElementById('feedbackImagen');
-
-    inputFile.addEventListener('change', function () {
-        if (this.files && this.files.length > 0) {
-            nombreSpan.textContent = this.files[0].name;
-            nombreSpan.style.color = '#1A8A4A';
-            feedbackImg.style.setProperty('display', 'none', 'important');
-        } else {
-            nombreSpan.textContent = 'Ningún archivo seleccionado';
-            nombreSpan.style.color = '';
-        }
-    });
-
-    // Precio: formatear a 2 decimales al salir del campo
-    const precioInput = form.querySelector('input[name="precio"]');
-    if (precioInput) {
-        precioInput.addEventListener('blur', function () {
-            const val = parseFloat(this.value);
-            if (!isNaN(val) && val >= 0) {
-                this.value = val.toFixed(2);
-            }
-        });
-    }
-
-    // Stock: solo enteros positivos
-    const stockInput = form.querySelector('input[name="stock"]');
-    if (stockInput) {
-        stockInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
-    }
-
-    form.addEventListener('submit', function (e) {
-        // Validar imagen manualmente (input hidden no activa was-validated)
-        if (!inputFile.files || inputFile.files.length === 0) {
-            e.preventDefault();
-            e.stopPropagation();
-            feedbackImg.textContent = 'Seleccione una imagen (PNG o JPG).';
-            feedbackImg.style.setProperty('display', 'block', 'important');
-            form.classList.add('was-validated');
-            return;
-        }
-
-        if (!form.checkValidity()) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        form.classList.add('was-validated');
-    });
-});
-</script>
+<script src="../funciones/agregarProducto.js"></script>
 <script src="../funciones/consultarProductos.js"></script>
 
 </body>
