@@ -9,6 +9,9 @@ if (empty($_SESSION['usuario_logueado'])) {
     exit;
 }
 
+// Cargar modelo del carrito para mostrar contador en el layout
+include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/CarritoModel.php";
+
 function MostrarNav(){
     if (session_status() == PHP_SESSION_NONE) session_start();
     $userName    = $_SESSION['usuario_nombre']     ?? null;
@@ -51,6 +54,18 @@ HTML
             </li>
 HTML;
 
+    // Calcular total de artículos en el carrito
+    $cartCount = 0;
+    $userId = $_SESSION['usuario_id'] ?? null;
+    if ($userId) {
+      $items = ObtenerCarritoModel($userId);
+      if (is_array($items)) {
+        foreach ($items as $it) {
+          $cartCount += isset($it['cantidad']) ? (int)$it['cantidad'] : 0;
+        }
+      }
+    }
+
     echo <<<HTML
     <nav class="navbar navbar-expand-lg sticky-top shadow" style="background: linear-gradient(135deg, #2ECC71 0%, #27a654 100%);">
       <div class="container-fluid">
@@ -81,8 +96,8 @@ HTML;
           </ul>
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="#" style="color: white; font-weight: 600;">
-                <i class="lni lni-cart me-1"></i>Carrito <span class="badge bg-danger" style="font-size: 0.7rem; padding: 3px 6px;">0</span>
+              <a class="nav-link" href="{$base}/Views/Producto/carrito.php" style="color: white; font-weight: 600;">
+                <i class="lni lni-cart me-1"></i>Carrito <span id="cart-badge" class="badge bg-danger" style="font-size: 0.7rem; padding: 3px 6px;">{$cartCount}</span>
               </a>
             </li>
 {$userMenu}

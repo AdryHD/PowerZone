@@ -269,21 +269,47 @@ $hayProductos = $mostrarOfertas
 <?php MostrarFooter(); ?>
 <?php MostrarJS(); ?>
 
+
+
 <script>
+function _updateCartBadge() {
+    fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({action: 'contar'})
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && typeof data.total !== 'undefined') {
+            const badge = document.getElementById('cart-badge');
+            if (badge) badge.textContent = data.total;
+        }
+    }).catch(()=>{});
+}
+
 function agregarAlCarrito(idProducto, nombre, btn) {
-    // Feedback visual inmediato
     const original = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="lni lni-checkmark-circle me-1"></i>Agregado';
     btn.style.background = 'linear-gradient(135deg,#27a654,#1a7a3f)';
 
-    setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = original;
-        btn.style.background = '#111';
-    }, 1500);
-
-    // TODO: llamada AJAX al endpoint de carrito cuando esté implementado
+    fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({action: 'agregar', id_producto: idProducto, cantidad: 1})
+    }).then(r => r.json())
+    }).then(resp => {
+        _updateCartBadge();
+        setTimeout(() => location.reload(), 700);
+    }).catch(() => {
+        // opcional: mostrar error
+    }).finally(() => {
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = original;
+            btn.style.background = '#111';
+        }, 900);
+    });
 }
 </script>
 

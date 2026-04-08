@@ -211,11 +211,22 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
           btn.disabled = true;
           btn.innerHTML = '<i class="lni lni-checkmark-circle me-1"></i>Agregado';
           btn.style.background = 'linear-gradient(135deg,#27a654,#1a7a3f)';
-          setTimeout(() => {
+
+          fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({action: 'agregar', id_producto: idProducto, cantidad: 1})
+          }).then(r => r.json())
+          .then(() => {
+            setTimeout(() => location.reload(), 700);
+          }).catch(()=>{})
+          .finally(() => {
+            setTimeout(() => {
               btn.disabled = false;
               btn.innerHTML = original;
               btn.style.background = '#111';
-          }, 1500);
+            }, 900);
+          });
       }
     </script>
 
