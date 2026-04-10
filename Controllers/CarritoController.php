@@ -1,4 +1,4 @@
-(<?php
+<?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/UtilitarioController.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/CarritoModel.php";
 
@@ -106,33 +106,26 @@ function CancelarCarrito()
 
 function FinalizarCarrito()
 {
-	$idUsuario    = $_SESSION["usuario_id"] ?? null;
-	$direccion    = $_POST["direccion"] ?? '';
-	$telefono     = $_POST["telefono"] ?? '';
-	$metodoPago   = $_POST["metodo_pago"] ?? '';
-	$observaciones = $_POST["observaciones"] ?? '';
+    $idUsuario    = $_SESSION["usuario_id"] ?? null;
+    $direccion    = $_POST["direccion"] ?? '';
+    $telefono     = $_POST["telefono"] ?? '';
+    $metodoPago   = $_POST["metodo_pago"] ?? '';
+    $observaciones = $_POST["observaciones"] ?? '';
 
-	if (!$idUsuario) {
-		http_response_code(400);
-		return ["error" => "Usuario no autenticado."];
-	}
+    if (!$idUsuario) {
+        // En lugar de dejar que el sistema redirija a HTML, mandamos error JSON
+        header('Content-Type: application/json');
+        http_response_code(401); 
+        echo json_encode(["error" => "Sesión expirada"]);
+        exit;
+    }
 
-	$result = FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones);
+    $result = FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones);
 
-	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-		header('Content-Type: application/json');
-		echo json_encode($result);
-		exit;
-	}
-
-	if ($result) {
-		header("Location: /G4_AmbienteWeb/Views/Home/inicio.php?msg=pedido_creado");
-		exit;
-	}
-
-	$_POST["Mensaje"]     = "No se pudo finalizar el pedido.";
-	$_POST["TipoMensaje"] = "danger";
-	return null;
+    // Quitamos el IF de X_REQUESTED_WITH para asegurar que devuelva JSON al fetch
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
 }
 
 // Generic action dispatcher for AJAX or form submissions

@@ -128,7 +128,6 @@ if (!empty($items) && is_array($items)) {
                         <select name="metodo_pago" class="form-select" required>
                             <option value="">Seleccione método de pago</option>
                             <option value="Tarjeta">Tarjeta</option>
-                            <option value="Efectivo">Efectivo</option>
                             <option value="Transferencia">Transferencia</option>
                         </select>
                     </div>
@@ -196,22 +195,20 @@ document.getElementById('btnCancelar').addEventListener('click', function(){
 // Finalizar pedido
 document.getElementById('formFinalizar').addEventListener('submit', function(e){
     e.preventDefault();
-    const form = e.target;
-    const data = new FormData(form);
-    const payload = { action: 'finalizar' };
-    for (const [k,v] of data.entries()) payload[k]=v;
-    postAction(payload).then(resp=>{
-        if (resp && resp.id_pedido) {
-            alert('Pedido creado. ID: ' + resp.id_pedido);
-            window.location.href = '/G4_AmbienteWeb/Views/Home/inicio.php?msg=pedido_creado';
-        } else if (resp && resp.total) {
-            alert('Pedido creado. Total: ' + resp.total);
-            window.location.href = '/G4_AmbienteWeb/Views/Home/inicio.php?msg=pedido_creado';
-        } else {
-            alert('Pedido finalizado');
-            window.location.reload();
-        }
-    }).catch(err=>{ alert('Error al finalizar pedido'); });
+    
+    const formData = new FormData(this);
+    const infoEnvio = {};
+    formData.forEach((value, key) => { infoEnvio[key] = value; });
+    localStorage.setItem('datos_envio', JSON.stringify(infoEnvio));
+
+    // Decidir ruta según método de pago
+    if (infoEnvio.metodo_pago === 'Tarjeta') {
+        window.location.href = '/G4_AmbienteWeb/Views/Producto/pagoSimulado.php';
+    } else if (infoEnvio.metodo_pago === 'Transferencia') {
+        window.location.href = '/G4_AmbienteWeb/Views/Producto/transferencia.php';
+    } else {
+        alert('Por favor seleccione un método de pago');
+    }
 });
 </script>
 
