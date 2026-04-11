@@ -19,3 +19,14 @@ function ConsultarPedidoModel($idPedido)
     CloseDatabase($context);
     return $datos;
 }
+
+function ActualizarEstadoPedidoModel($idPedido, $nuevoEstado)
+{
+    $context = OpenDatabase();
+    $sql = "CALL sp_ActualizarEstadoPedido($idPedido, '$nuevoEstado')";
+    
+    $resultado = $context->query($sql);
+    
+    CloseDatabase($context);
+    return $resultado;
+}
