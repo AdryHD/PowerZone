@@ -185,20 +185,20 @@ echo
 
     <link rel="stylesheet" href="/PowerZone/Views/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/PowerZone/Views/assets/css/lineicons.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/materialdesignicons.min.css" />
     <link rel="stylesheet" href="/PowerZone/Views/assets/css/main.css" />
     <link rel="stylesheet" href="/PowerZone/Views/assets/css/custom.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.bootstrap5.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/dataTables.bootstrap5.css" />
   </head>';
 }
 
 function MostrarJS(){
 echo 
 '    <script src="/PowerZone/Views/assets/jss/jquery-3.7.1.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
      <script src="/PowerZone/Views/assets/jss/bootstrap.bundle.min.js"></script>
+     <script src="/PowerZone/Views/assets/jss/jquery.validate.min.js"></script>
      <script src="/PowerZone/Views/assets/jss/main.js"></script>
      <script src="/PowerZone/Views/funciones/cerrarSesion.js"></script>
-     <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
-     <script src="https://cdn.datatables.net/2.3.7/js/dataTables.bootstrap5.js"></script>';
+     <script src="/PowerZone/Views/assets/jss/dataTables.min.js"></script>
+     <script src="/PowerZone/Views/assets/jss/dataTables.bootstrap5.min.js"></script>';
 }
