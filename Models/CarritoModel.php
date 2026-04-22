@@ -145,13 +145,13 @@ function CancelarCarritoModel($idUsuario)
 	}
 }
 
-function FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones)
+function FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones, $numComprobante)
 {
 	try
 	{
 		$context = OpenDatabase();
 
-		$sp = "CALL sp_FinalizarCarrito('$idUsuario', '$direccion', '$telefono', '$metodoPago', '$observaciones')";
+		$sp = "CALL sp_FinalizarCarrito('$idUsuario', '$direccion', '$telefono', '$metodoPago', '$observaciones', '$numComprobante')";
 		$result = $context->query($sp);
 
 		$datos = null;

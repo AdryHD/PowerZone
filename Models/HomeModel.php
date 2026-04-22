@@ -13,6 +13,13 @@ function RegistrarModel($identificacion, $nombre, $contrasenna, $correoElectroni
         CloseDatabase($context);
         return $result;
     }
+    catch (mysqli_sql_exception $e)
+    {
+        if ($e->getCode() === 1062) {
+            return "duplicado";
+        }
+        return false;
+    }
     catch (Exception $e)
     {
         return false;

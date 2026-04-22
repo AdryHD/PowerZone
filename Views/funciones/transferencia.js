@@ -31,6 +31,8 @@
             return;
         }
 
+        const referencia = document.getElementById('referencia')?.value?.trim() || '';
+
         fetch('/PowerZone/Controllers/CarritoController.php', {
             method: 'POST',
             headers: { 
@@ -39,7 +41,8 @@
             },
             body: new URLSearchParams({
                 action: 'finalizar',
-                ...datosEnvio
+                ...datosEnvio,
+                num_comprobante: referencia
             })
         })
         .then(async response => {

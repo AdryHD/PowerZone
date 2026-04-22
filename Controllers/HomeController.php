@@ -16,7 +16,7 @@ if (isset($_POST["btnRegistrar"])) {
 
     $result = RegistrarModel($identificacion, $nombre, $contrasenna, $correoElectronico);
 
-    if ($result) {
+    if ($result === true) {
         $plantillaBienvenida = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/emails/bienvenida.html");
         $cuerpoCorreo        = str_replace("{{NOMBRE}}", $nombre, $plantillaBienvenida);
         EnviarCorreo("Bienvenido/a a PowerZone", $cuerpoCorreo, $correoElectronico);
@@ -25,6 +25,9 @@ if (isset($_POST["btnRegistrar"])) {
         $_SESSION["tipo_mensaje"] = "success";
         header("Location: /PowerZone/Views/Home/inicio.php");
         exit;
+    } elseif ($result === "duplicado") {
+        $_POST["Mensaje"]     = "El correo electrónico ya se encuentra registrado.";
+        $_POST["TipoMensaje"] = "warning";
     } else {
         $_POST["Mensaje"]     = "Su información no fue registrada correctamente.";
         $_POST["TipoMensaje"] = "danger";
@@ -61,7 +64,7 @@ if (isset($_POST["btnRecuperarAcceso"])) {
 
     if ($result) {
 
-        $nuevaContrasena = GenerarContrasena();
+        $nuevaContrasena = GenerarContrasenna();
         $actualizacion   = ActualizarContrasenaModel($nuevaContrasena, $result["id_usuario"]);
 
         if ($actualizacion) {

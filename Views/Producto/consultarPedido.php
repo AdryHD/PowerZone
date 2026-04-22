@@ -85,6 +85,11 @@ function obtenerColorEstado($estado) {
                                 <p class="mb-1"><strong>Dirección:</strong> <?php echo htmlspecialchars($datos[0]['Direccion']); ?></p>
                                 <p class="mb-1"><strong>Teléfono:</strong> <?php echo htmlspecialchars($datos[0]['Telefono']); ?></p>
                                 <p class="mb-1"><strong>Método de Pago:</strong> <?php echo htmlspecialchars($datos[0]['Metodo_pago']); ?></p>
+                                <?php if (strtolower($datos[0]['Metodo_pago']) === 'transferencia' && !empty($datos[0]['Num_Comprobante'])): ?>
+                                <p class="mb-1"><strong>N° Comprobante:</strong>
+                                    <span class="badge bg-info text-dark fs-6"><?php echo htmlspecialchars($datos[0]['Num_Comprobante']); ?></span>
+                                </p>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6 ps-md-4">
                                 <p class="mb-1 text-muted small text-uppercase fw-bold">Estado del Pedido</p>

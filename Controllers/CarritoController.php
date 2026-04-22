@@ -107,10 +107,11 @@ function CancelarCarrito()
 function FinalizarCarrito()
 {
     $idUsuario    = $_SESSION["usuario_id"] ?? null;
-    $direccion    = $_POST["direccion"] ?? '';
-    $telefono     = $_POST["telefono"] ?? '';
-    $metodoPago   = $_POST["metodo_pago"] ?? '';
-    $observaciones = $_POST["observaciones"] ?? '';
+    $direccion      = $_POST["direccion"] ?? '';
+    $telefono       = $_POST["telefono"] ?? '';
+    $metodoPago     = $_POST["metodo_pago"] ?? '';
+    $observaciones  = $_POST["observaciones"] ?? '';
+    $numComprobante = $_POST["num_comprobante"] ?? '';
 
     if (!$idUsuario) {
         header('Content-Type: application/json');
@@ -119,7 +120,7 @@ function FinalizarCarrito()
         exit;
     }
 
-    $result = FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones);
+    $result = FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones, $numComprobante);
 
     if ($result && isset($result["id_pedido"])) {
         if ($metodoPago === 'transferencia') {

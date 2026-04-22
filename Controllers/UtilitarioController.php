@@ -1,6 +1,6 @@
 <?php
 
-function GenerarContrasena()
+function GenerarContrasenna()
 {
     $letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $longitud = 8;
@@ -19,29 +19,30 @@ function EnviarCorreo($asunto, $contenido, $destinatario)
     require_once __DIR__ . '/PHPMailer/src/PHPMailer.php';
     require_once __DIR__ . '/PHPMailer/src/SMTP.php';
 
-    $correoSalida     = "ahernandez10645@ufide.ac.cr";
-    $contrasenaSalida = "Detrasdelsol001";
+    $correoSalida = "ahernandez10645@ufide.ac.cr";
+    $contrasennaSalida = "";
 
-    if ($contrasenaSalida == "") {
-        return true; 
+    if($contrasennaSalida == "")
+    {
+        return true;
     }
 
     $mail = new PHPMailer();
     $mail->CharSet = 'UTF-8';
 
-    $mail->isSMTP();
-    $mail->isHTML(true);
-    $mail->Host       = 'smtp.office365.com';
+    $mail->IsSMTP();
+    $mail->IsHTML(true);
+    $mail->Host = 'smtp.office365.com';
     $mail->SMTPSecure = 'tls';
-    $mail->Port       = 587;
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $correoSalida;
-    $mail->Password   = $contrasenaSalida;
+    $mail->Port = 587;
+    $mail->SMTPAuth = true;
+    $mail->Username = $correoSalida;
+    $mail->Password = $contrasennaSalida;
 
-    $mail->setFrom($correoSalida, 'PowerZone');
+    $mail->SetFrom($correoSalida);
     $mail->Subject = $asunto;
-    $mail->msgHTML($contenido);
-    $mail->addAddress($destinatario);
+    $mail->MsgHTML($contenido);
+    $mail->AddAddress($destinatario);
     $mail->send();
 }
 
