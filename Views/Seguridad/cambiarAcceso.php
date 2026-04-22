@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/SeguridadController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/SeguridadController.php";
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +14,6 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/SeguridadC
 
     <main class="main-wrapper" style="margin-left:0;">
 
-        <!-- Banner de seguridad -->
         <div style="background: linear-gradient(135deg, #2ECC71 0%, #1A8A4A 100%); padding: 40px 0 60px;">
             <div class="container text-center text-white">
                 <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center mb-3"
@@ -85,7 +84,7 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/SeguridadC
                         </div>
 
                         <div class="text-center mt-3">
-                            <a href="/G4_AmbienteWeb/Views/Seguridad/cambiarPerfil.php" class="text-decoration-none" style="color:#2ECC71;">
+                            <a href="/PowerZone/Views/Seguridad/cambiarPerfil.php" class="text-decoration-none" style="color:#2ECC71;">
                                 <i class="lni lni-arrow-left me-1"></i>Volver a mi perfil
                             </a>
                         </div>

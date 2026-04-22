@@ -27,12 +27,11 @@
         const datosEnvio = JSON.parse(localStorage.getItem('datos_envio'));
 
         if (!datosEnvio) {
-            alert('Error: No se encontraron datos de envío.');
-            window.location.href = '/G4_AmbienteWeb/Views/Carrito/carrito.php';
+            window.location.href = '/PowerZone/Views/Producto/carrito.php';
             return;
         }
 
-        fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
+        fetch('/PowerZone/Controllers/CarritoController.php', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -57,8 +56,7 @@
         })
         .then(resp => {
             localStorage.removeItem('datos_envio');
-            alert('Trasnferencia enviada, en breve un empleado verificará su validez.');
-            window.location.href = '/G4_AmbienteWeb/Views/Home/inicio.php?msg=pedido_pendiente';
+            window.location.href = '/PowerZone/Views/Home/home.php?msg=pedido_creado';
         })
         .catch(err => {
             alert(err.message);

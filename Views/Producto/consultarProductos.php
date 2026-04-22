@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/ProductoController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/ProductoController.php";
 
 $datosProductos        = ConsultarProductos();
 $datosCategoriasSelect = ConsultarCategorias();
@@ -18,7 +18,6 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
 
     <main class="main-wrapper" style="margin-left:0;">
 
-        <!-- Banner de productos -->
         <div style="background: linear-gradient(135deg, #2ECC71 0%, #1A8A4A 100%); padding: 40px 0 60px;">
             <div class="container text-center text-white">
                 <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center mb-3"
@@ -117,7 +116,7 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
                                             <td>' . $ofertaBadge . '</td>
                                             <td>' . $imagen . '</td>
                                             <td class="text-center">
-                                                <a href="' . ($esActivo ? '/G4_AmbienteWeb/Views/Producto/actualizarProducto.php?id=' . $producto['id_producto'] : '#') . '"
+                                                <a href="' . ($esActivo ? '/PowerZone/Views/Producto/actualizarProducto.php?id=' . $producto['id_producto'] : '#') . '"
                                                    class="btn btn-sm fw-semibold me-1' . ($esActivo ? '' : ' disabled') . '"
                                                    style="' . ($esActivo ? 'background:#e8f4fd; color:#1a6ebd; border:1px solid #90c4f0;' : 'background:#f0f0f0; color:#aaa; border:1px solid #ccc; pointer-events:none;') . '"
                                                    title="' . ($esActivo ? 'Editar producto' : 'Activa el producto para poder editarlo') . '"
@@ -170,7 +169,6 @@ $esAdmin = isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] == 1;
     <?php MostrarJS(); ?>
 
 <?php if ($esAdmin): ?>
-<!-- Modal Agregar Producto -->
 <div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">

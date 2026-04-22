@@ -2,14 +2,13 @@
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/CarritoController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/CarritoController.php";
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 $items = ObtenerCarrito();
 
-// Transform items into list keyed by id_detalle
 $lista = [];
 $total = 0.00;
 $cartId = null;
@@ -46,7 +45,7 @@ if (!empty($items) && is_array($items)) {
         <div class="col-md-8">
             <h3 class="fw-bold">Resumen del Carrito</h3>
             <?php if (empty($lista)): ?>
-                <div class="alert alert-info mt-4">Tu carrito está vacío. <a href="/G4_AmbienteWeb/Views/Producto/tienda.php">Ir a tienda</a></div>
+                <div class="alert alert-info mt-4">Tu carrito está vacío. <a href="/PowerZone/Views/Producto/tienda.php">Ir a tienda</a></div>
             <?php else: ?>
                 <div class="table-responsive mt-4">
                     <table class="table align-middle">
@@ -141,72 +140,67 @@ if (!empty($items) && is_array($items)) {
     </div>
 </main>
 
+<div class="modal fade" id="modalEliminarItem" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header" style="background:linear-gradient(135deg,#2ECC71 0%,#1A8A4A 100%);">
+        <h5 class="modal-title text-white fw-bold"><i class="lni lni-trash me-2"></i>Eliminar producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <i class="lni lni-question-circle" style="font-size:3rem;color:#2ECC71;"></i>
+        <p class="mt-3 mb-0 fs-6">¿Deseas eliminar este producto del carrito?</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn text-white fw-semibold" style="background:#2ECC71;border:none;" id="btnConfirmarEliminarItem" data-bs-dismiss="modal">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalVaciarCarrito" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header" style="background:linear-gradient(135deg,#2ECC71 0%,#1A8A4A 100%);">
+        <h5 class="modal-title text-white fw-bold"><i class="lni lni-trash me-2"></i>Vaciar carrito</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <i class="lni lni-question-circle" style="font-size:3rem;color:#2ECC71;"></i>
+        <p class="mt-3 mb-0 fs-6">¿Deseas vaciar todos los productos del carrito?</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn text-white fw-semibold" style="background:#2ECC71;border:none;" id="btnConfirmarVaciar" data-bs-dismiss="modal">Sí, vaciar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCancelarCarrito" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header" style="background:linear-gradient(135deg,#2ECC71 0%,#1A8A4A 100%);">
+        <h5 class="modal-title text-white fw-bold"><i class="lni lni-close me-2"></i>Cancelar carrito</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <i class="lni lni-question-circle" style="font-size:3rem;color:#2ECC71;"></i>
+        <p class="mt-3 mb-0 fs-6">¿Deseas cancelar el carrito? Esta acción eliminará todos los productos.</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn text-white fw-semibold" style="background:#2ECC71;border:none;" id="btnConfirmarCancelar" data-bs-dismiss="modal">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php MostrarFooter(); ?>
 <?php MostrarJS(); ?>
 
-<script>
-// Helper to POST form data
-function postAction(data){
-    return fetch('/G4_AmbienteWeb/Controllers/CarritoController.php',{
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body: new URLSearchParams(data)
-    }).then(r=>r.json());
-}
-
-// Update quantity
-document.querySelectorAll('.btn-update').forEach(btn=>{
-    btn.addEventListener('click', function(){
-        const tr = this.closest('tr');
-        const id_det = tr.getAttribute('data-id');
-        const qty = tr.querySelector('.qty-input').value;
-        if (!id_det) return;
-        postAction({action:'actualizar', id_detalle: id_det, cantidad: qty}).then(resp=>{
-            // on success reload
-            location.reload();
-        }).catch(()=>{ alert('Error al actualizar'); });
-    });
-});
-
-// Remove item
-document.querySelectorAll('.btn-remove').forEach(btn=>{
-    btn.addEventListener('click', function(){
-        if (!confirm('¿Eliminar este producto del carrito?')) return;
-        const tr = this.closest('tr');
-        const id_det = tr.getAttribute('data-id');
-        postAction({action:'eliminar', id_detalle: id_det}).then(resp=>{
-            location.reload();
-        }).catch(()=>{ alert('Error al eliminar'); });
-    });
-});
-
-// Vaciar carrito
-document.getElementById('btnVaciar').addEventListener('click', function(){
-    if (!confirm('¿Vaciar todo el carrito?')) return;
-    postAction({action:'vaciar'}).then(resp=>{ location.reload(); }).catch(()=>{ alert('Error al vaciar'); });
-});
-
-// Cancelar carrito
-document.getElementById('btnCancelar').addEventListener('click', function(){
-    if (!confirm('¿Cancelar carrito (eliminar y marcar cancelado)?')) return;
-    postAction({action:'cancelar'}).then(resp=>{ location.reload(); }).catch(()=>{ alert('Error al cancelar'); });
-});
-
-// Finalizar pedido
-document.getElementById('formFinalizar').addEventListener('submit', function(e){
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const infoEnvio = {};
-    formData.forEach((value, key) => { infoEnvio[key] = value; });
-    
-    // Guardamos los datos temporalmente
-    localStorage.setItem('datos_envio', JSON.stringify(infoEnvio));
-
-    // Redirigimos a la nueva vista de revisión
-    window.location.href = '/G4_AmbienteWeb/Views/Producto/confirmarPedido.php';
-});
-</script>
+<script src="../funciones/carrito.js"></script>
 
 </body>
 </html>

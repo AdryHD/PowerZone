@@ -1,5 +1,5 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/UtilitarioModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/UtilitarioModel.php";
 
 function ConsultarProductosModel()
 {
@@ -30,7 +30,8 @@ function ConsultarCategoriasModel()
     try
     {
         $context = OpenDatabase();
-        $result  = $context->query("SELECT id_categoria, nombre FROM categorias WHERE estado = 'activo' ORDER BY nombre");
+        $sp      = "CALL sp_ConsultarCategorias()";
+        $result  = $context->query($sp);
         $datos   = [];
         while ($fila = $result->fetch_assoc())
         {

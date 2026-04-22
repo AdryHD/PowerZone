@@ -1,7 +1,7 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/UtilitarioController.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/HomeModel.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/SeguridadModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/UtilitarioController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/HomeModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/SeguridadModel.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -17,9 +17,13 @@ if (isset($_POST["btnRegistrar"])) {
     $result = RegistrarModel($identificacion, $nombre, $contrasenna, $correoElectronico);
 
     if ($result) {
+        $plantillaBienvenida = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/emails/bienvenida.html");
+        $cuerpoCorreo        = str_replace("{{NOMBRE}}", $nombre, $plantillaBienvenida);
+        EnviarCorreo("Bienvenido/a a PowerZone", $cuerpoCorreo, $correoElectronico);
+
         $_SESSION["mensaje"]      = "Usuario registrado correctamente.";
         $_SESSION["tipo_mensaje"] = "success";
-        header("Location: /G4_AmbienteWeb/Views/Home/inicio.php");
+        header("Location: /PowerZone/Views/Home/inicio.php");
         exit;
     } else {
         $_POST["Mensaje"]     = "Su información no fue registrada correctamente.";
@@ -41,7 +45,7 @@ if (isset($_POST["btnIniciarSesion"])) {
         $_SESSION["usuario_email"]       = $result["correo"];
         $_SESSION["usuario_rol"]         = $result["id_rol"];
         $_SESSION["usuario_nombre_rol"]  = $result["nombre_rol"];
-        header("Location: /G4_AmbienteWeb/Views/Home/home.php");
+        header("Location: /PowerZone/Views/Home/home.php");
         exit;
     } else {
         $_POST["Mensaje"]     = "Su información no fue autenticada correctamente.";
@@ -62,7 +66,7 @@ if (isset($_POST["btnRecuperarAcceso"])) {
 
         if ($actualizacion) {
 
-            $plantilla    = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/emails/recuperarAcceso.html");
+            $plantilla    = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/emails/recuperarAcceso.html");
             $cuerpoCorreo = str_replace(
                 ["{{NOMBRE}}", "{{CONTRASENA}}"],
                 [$result["nombre"], $nuevaContrasena],
@@ -71,7 +75,7 @@ if (isset($_POST["btnRecuperarAcceso"])) {
 
             EnviarCorreo("Recuperar Acceso - PowerZone", $cuerpoCorreo, $result["correo"]);
 
-            header("Location: /G4_AmbienteWeb/Views/Home/inicio.php");
+            header("Location: /PowerZone/Views/Home/inicio.php");
             exit;
         }
     }

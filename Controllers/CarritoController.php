@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/UtilitarioController.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/CarritoModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/UtilitarioController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/CarritoModel.php";
 
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
@@ -26,7 +26,7 @@ function AgregarAlCarrito()
 	}
 
 	if ($result) {
-		header("Location: /G4_AmbienteWeb/Views/Producto/tienda.php?msg=agregado");
+		header("Location: /PowerZone/Views/Producto/tienda.php?msg=agregado");
 		exit;
 	}
 
@@ -113,7 +113,6 @@ function FinalizarCarrito()
     $observaciones = $_POST["observaciones"] ?? '';
 
     if (!$idUsuario) {
-        // En lugar de dejar que el sistema redirija a HTML, mandamos error JSON
         header('Content-Type: application/json');
         http_response_code(401); 
         echo json_encode(["error" => "Sesión expirada"]);
@@ -122,19 +121,38 @@ function FinalizarCarrito()
 
     $result = FinalizarCarritoModel($idUsuario, $direccion, $telefono, $metodoPago, $observaciones);
 
-    // Quitamos el IF de X_REQUESTED_WITH para asegurar que devuelva JSON al fetch
+    if ($result && isset($result["id_pedido"])) {
+        if ($metodoPago === 'transferencia') {
+            $_SESSION["mensaje"] = "¡Pedido #" . $result["id_pedido"] . " recibido! Tu transferencia está pendiente de verificación por un administrador.";
+        } else {
+            $_SESSION["mensaje"] = "¡Pedido #" . $result["id_pedido"] . " confirmado con éxito! Pronto recibirás un correo de confirmación.";
+        }
+        $_SESSION["tipo_mensaje"] = "success";
+        $plantilla    = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/emails/confirmacionPedido.html");
+        $cuerpoCorreo = str_replace(
+            ["{{NOMBRE}}", "{{ID_PEDIDO}}", "{{TOTAL}}", "{{METODO_PAGO}}", "{{DIRECCION}}"],
+            [
+                $_SESSION["usuario_nombre"] ?? "",
+                $result["id_pedido"],
+                number_format($result["total"], 2),
+                $metodoPago,
+                $direccion
+            ],
+            $plantilla
+        );
+        EnviarCorreo("Confirmación de Pedido #" . $result["id_pedido"] . " - PowerZone", $cuerpoCorreo, $_SESSION["usuario_email"] ?? "");
+    }
+
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
 }
 
-// Generic action dispatcher for AJAX or form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$action = $_POST['action'] ?? null;
 	switch ($action) {
 		case 'agregar': AgregarAlCarrito(); break;
 		case 'contar':
-			// Devuelve el total de cantidades en el carrito para el usuario autenticado
 			$userId = $_SESSION['usuario_id'] ?? null;
 			header('Content-Type: application/json');
 			if (!$userId) {

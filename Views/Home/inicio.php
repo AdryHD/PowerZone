@@ -1,6 +1,4 @@
 <?php
-// Al llegar al login siempre se cierra la sesión activa,
-// pero se preservan los mensajes flash del controlador.
 if (session_status() == PHP_SESSION_NONE) session_start();
 $_flashMsg  = $_SESSION['mensaje']      ?? '';
 $_flashType = $_SESSION['tipo_mensaje'] ?? 'info';
@@ -11,7 +9,7 @@ if ($_flashMsg) {
     $_SESSION['mensaje']      = $_flashMsg;
     $_SESSION['tipo_mensaje'] = $_flashType;
 }
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/HomeController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/HomeController.php";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -38,7 +36,6 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/HomeContro
                 <div class="card-body">
                   <h4 class="text-center mb-4">Inicio de Sesión</h4>
                     <?php
-                    // Mostrar mensajes de error/éxito desde $_SESSION
                     if (session_status() == PHP_SESSION_NONE) session_start();
                     if (!empty($_SESSION['mensaje'])) {
                       $msg = $_SESSION['mensaje'];
@@ -46,7 +43,6 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/HomeContro
                       echo '<div class="alert alert-' . $type . ' alert-dismissible fade show" role="alert">' . htmlspecialchars($msg) . '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
                       unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
                     }
-                    // También mostrar mensajes por GET (compatibilidad)
                     $error = $_GET['error'] ?? '';
                     if ($error) {
                       $msg = '';

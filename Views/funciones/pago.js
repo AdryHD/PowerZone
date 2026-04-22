@@ -31,8 +31,9 @@
     });
 
     numTarjeta.addEventListener('input', function () {
-        this.value = this.value.replace(/\D/g, '');
-        this.setCustomValidity(this.value.length !== 16 ? 'Se requieren 16 dígitos.' : '');
+        let digits = this.value.replace(/\D/g, '').slice(0, 16);
+        this.value = digits.match(/.{1,4}/g)?.join(' ') || '';
+        this.setCustomValidity(digits.length !== 16 ? 'Se requieren 16 dígitos.' : '');
     });
 
     cvc.addEventListener('input', function () {
@@ -59,7 +60,7 @@
         const datosEnvio = JSON.parse(localStorage.getItem('datos_envio'));
 
 
-        fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
+        fetch('/PowerZone/Controllers/CarritoController.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -87,8 +88,7 @@
 
             .then(resp => {
                 localStorage.removeItem('datos_envio');
-                alert('¡Pedido finalizado con éxito!');
-                window.location.href = '/G4_AmbienteWeb/Views/Home/inicio.php?msg=pedido_creado';
+                window.location.href = '/PowerZone/Views/Home/home.php?msg=pedido_creado';
             })
             .catch(err => {
                 alert(err.message);

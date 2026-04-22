@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layoutExterno.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/HomeController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layoutExterno.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/HomeController.php";
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +14,6 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/HomeContro
 
         <?php MostrarHeader(); ?>
 
-        <!-- Banner de recuperación -->
         <div style="background: linear-gradient(135deg, #2ECC71 0%, #1A8A4A 100%); padding: 40px 0 60px;">
             <div class="container text-center text-white">
                 <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center mb-3"

@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/UtilitarioController.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/ProductoModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/UtilitarioController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/ProductoModel.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -34,9 +34,9 @@ if (isset($_POST["btnAgregarProducto"])) {
     $imagen = '';
     if (!empty($_FILES["ImagenProducto"]["name"]) && $_FILES["ImagenProducto"]["error"] === UPLOAD_ERR_OK) {
         $nombreArchivo = basename($_FILES["ImagenProducto"]["name"]);
-        $imagen        = '/G4_AmbienteWeb/Views/assets/images/products/' . $nombreArchivo;
+        $imagen        = '/PowerZone/Views/assets/images/products/' . $nombreArchivo;
         $destino       = $_SERVER["DOCUMENT_ROOT"] . $imagen;
-        if (!copy($_FILES["ImagenProducto"]["tmp_name"], $destino)) {
+        if (!move_uploaded_file($_FILES["ImagenProducto"]["tmp_name"], $destino)) {
             $_POST["Mensaje"]     = "Error al guardar la imagen. Verifique permisos de la carpeta.";
             $_POST["TipoMensaje"] = "danger";
             return;
@@ -46,7 +46,7 @@ if (isset($_POST["btnAgregarProducto"])) {
     $result = AgregarProductoModel($idCategoria, $nombre, $descripcion, $precio, $stock, $talla, $color, $imagen);
 
     if ($result) {
-        header("Location: /G4_AmbienteWeb/Views/Producto/consultarProductos.php?msg=agregado");
+        header("Location: /PowerZone/Views/Producto/consultarProductos.php?msg=agregado");
         exit;
     } else {
         $_POST["Mensaje"]     = "Error al agregar el producto. Intente de nuevo.";
@@ -82,9 +82,9 @@ if (isset($_POST["btnActualizarProducto"])) {
     $imagen = "";
     if (!empty($_FILES["ImagenProducto"]["name"]) && $_FILES["ImagenProducto"]["error"] === UPLOAD_ERR_OK) {
         $nombreArchivo = basename($_FILES["ImagenProducto"]["name"]);
-        $imagen        = '/G4_AmbienteWeb/Views/assets/images/products/' . $nombreArchivo;
+        $imagen        = '/PowerZone/Views/assets/images/products/' . $nombreArchivo;
         $destino       = $_SERVER["DOCUMENT_ROOT"] . $imagen;
-        if (!copy($_FILES["ImagenProducto"]["tmp_name"], $destino)) {
+        if (!move_uploaded_file($_FILES["ImagenProducto"]["tmp_name"], $destino)) {
             $_POST["Mensaje"]     = "Error al guardar la imagen. Verifique permisos de la carpeta.";
             $_POST["TipoMensaje"] = "danger";
             return;
@@ -94,7 +94,7 @@ if (isset($_POST["btnActualizarProducto"])) {
     $result = ActualizarProductoModel($idProducto, $idCategoria, $nombre, $descripcion, $precio, $stock, $talla, $color, $imagen);
 
     if ($result) {
-        header("Location: /G4_AmbienteWeb/Views/Producto/consultarProductos.php?msg=actualizado");
+        header("Location: /PowerZone/Views/Producto/consultarProductos.php?msg=actualizado");
         exit;
     } else {
         $_POST["Mensaje"]     = "Error al actualizar el producto. Intente de nuevo.";

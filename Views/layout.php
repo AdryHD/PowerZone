@@ -1,16 +1,14 @@
 <?php
 
-// ── Verificación de sesión (cross-platform, sin depender de .htaccess) ──
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (empty($_SESSION['usuario_logueado'])) {
-    header('Location: /G4_AmbienteWeb/Views/Home/inicio.php?error=must_login');
+    header('Location: /PowerZone/Views/Home/inicio.php?error=must_login');
     exit;
 }
 
-// Cargar modelo del carrito para mostrar contador en el layout
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Models/CarritoModel.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Models/CarritoModel.php";
 
 function MostrarNav(){
     if (session_status() == PHP_SESSION_NONE) session_start();
@@ -19,12 +17,36 @@ function MostrarNav(){
     $safeName    = $userName  ? htmlspecialchars($userName,  ENT_QUOTES, 'UTF-8') : '';
     $safeRol     = $nombreRol ? htmlspecialchars($nombreRol, ENT_QUOTES, 'UTF-8') : '';
 
-    // Rutas absolutas para que funcionen desde cualquier ubicación
-    $base = '/G4_AmbienteWeb';
+    $base = '/PowerZone';
 
     $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] == 1;
+
+    $cartCount = 0;
+    $userId = $_SESSION['usuario_id'] ?? null;
+    if ($userId) {
+      $items = ObtenerCarritoModel($userId);
+      if (is_array($items)) {
+        foreach ($items as $it) {
+          $cartCount += isset($it['cantidad']) ? (int)$it['cantidad'] : 0;
+        }
+      }
+    }
     $gestionProductos = $esAdmin
         ? "<li><a class=\"dropdown-item\" href=\"{$base}/Views/Producto/consultarProductos.php\"><i class=\"lni lni-shopping-basket me-2\"></i>Gestión Productos</a></li>"
+        : '';
+
+    $pedidosNav = $esAdmin
+        ? "<li class=\"nav-item\"><a class=\"nav-link\" href=\"{$base}/Views/Producto/consultarPedido.php\" style=\"color: white; font-weight: 600;\"><i class=\"lni lni-package me-1\"></i>Pedidos</a></li>"
+          . "<li class=\"nav-item\"><a class=\"nav-link\" href=\"{$base}/Views/Seguridad/gestionUsuarios.php\" style=\"color: white; font-weight: 600;\"><i class=\"lni lni-users me-1\"></i>Usuarios</a></li>"
+        : '';
+
+    $clienteNav = !$esAdmin
+        ? "<li class=\"nav-item\"><a class=\"nav-link\" href=\"{$base}/Views/Producto/tienda.php\" style=\"color: white; font-weight: 600;\"><i class=\"lni lni-shopping-basket me-1\"></i>Productos</a></li>"
+          . "<li class=\"nav-item\"><a class=\"nav-link\" href=\"{$base}/Views/Producto/tienda.php?cat=99\" style=\"color: white; font-weight: 600;\"><i class=\"lni lni-offer me-1\"></i>Ofertas</a></li>"
+        : '';
+
+    $carritoNav = !$esAdmin
+        ? "<li class=\"nav-item\"><a class=\"nav-link\" href=\"{$base}/Views/Producto/carrito.php\" style=\"color: white; font-weight: 600;\"><i class=\"lni lni-cart me-1\"></i>Carrito <span id=\"cart-badge\" class=\"badge bg-danger\" style=\"font-size: 0.7rem; padding: 3px 6px;\">{$cartCount}</span></a></li>"
         : '';
 
     $userMenu = $userName ? <<<HTML
@@ -38,7 +60,7 @@ function MostrarNav(){
                 <li><a class="dropdown-item" href="{$base}/Views/Seguridad/cambiarAcceso.php"><i class="lni lni-lock me-2"></i>Cambiar Contraseña</a></li>
                 {$gestionProductos}
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#" onclick="CerrarSesion(); return false;"><i class="lni lni-exit me-2"></i>Cerrar Sesión</a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion"><i class="lni lni-exit me-2"></i>Cerrar Sesión</a></li>
               </ul>
             </li>
 HTML
@@ -53,18 +75,6 @@ HTML
               </ul>
             </li>
 HTML;
-
-    // Calcular total de artículos en el carrito
-    $cartCount = 0;
-    $userId = $_SESSION['usuario_id'] ?? null;
-    if ($userId) {
-      $items = ObtenerCarritoModel($userId);
-      if (is_array($items)) {
-        foreach ($items as $it) {
-          $cartCount += isset($it['cantidad']) ? (int)$it['cantidad'] : 0;
-        }
-      }
-    }
 
     echo <<<HTML
     <nav class="navbar navbar-expand-lg sticky-top shadow" style="background: linear-gradient(135deg, #2ECC71 0%, #27a654 100%);">
@@ -83,28 +93,11 @@ HTML;
                 <i class="lni lni-home me-1"></i>Inicio
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{$base}/Views/Producto/tienda.php" style="color: white; font-weight: 600;">
-                <i class="lni lni-shopping-basket me-1"></i>Productos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{$base}/Views/Producto/tienda.php?cat=99" style="color: white; font-weight: 600;">
-                <i class="lni lni-offer me-1"></i>Ofertas
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{$base}/Views/Producto/consultarPedido.php" style="color: white; font-weight: 600;">
-                <i class="lni lni-package me-1"></i>Pedidos
-              </a>
-            </li>
+            {$clienteNav}
+            {$pedidosNav}
           </ul>
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="{$base}/Views/Producto/carrito.php" style="color: white; font-weight: 600;">
-                <i class="lni lni-cart me-1"></i>Carrito <span id="cart-badge" class="badge bg-danger" style="font-size: 0.7rem; padding: 3px 6px;">{$cartCount}</span>
-              </a>
-            </li>
+            {$carritoNav}
 {$userMenu}
           </ul>
         </div>
@@ -157,7 +150,28 @@ echo
           </div>
         </div>
       </div>
-    </footer>';
+    </footer>
+
+    <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header" style="background: linear-gradient(135deg, #2ECC71 0%, #1A8A4A 100%);">
+            <h5 class="modal-title text-white fw-bold"><i class="lni lni-exit me-2"></i>Cerrar Sesión</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-center py-4">
+            <i class="lni lni-question-circle" style="font-size: 3rem; color: #2ECC71;"></i>
+            <p class="mt-3 mb-0 fs-6">¿Estás seguro de que deseas cerrar sesión?</p>
+          </div>
+          <div class="modal-footer border-0 justify-content-center gap-2">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn text-white fw-semibold" style="background:#2ECC71; border:none;" id="btnConfirmarCerrarSesion">
+              <i class="lni lni-exit me-1"></i>Sí, cerrar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>';
 }
 
 function MostrarCSS(){
@@ -169,22 +183,22 @@ echo
     <title>Inicio | PowerZone - Tienda Deportiva</title>
     <link rel="icon" href="data:,">
 
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../assets/css/lineicons.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/lineicons.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
-    <link rel="stylesheet" href="../assets/css/main.css" />
-    <link rel="stylesheet" href="../assets/css/custom.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/main.css" />
+    <link rel="stylesheet" href="/PowerZone/Views/assets/css/custom.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.bootstrap5.css" />
   </head>';
 }
 
 function MostrarJS(){
 echo 
-'    <script src="../assets/jss/jquery-3.7.1.min.js"></script>
+'    <script src="/PowerZone/Views/assets/jss/jquery-3.7.1.min.js"></script>
      <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-     <script src="../assets/jss/bootstrap.bundle.min.js"></script>
-     <script src="../assets/jss/main.js"></script>
-     <script src="../funciones/cerrarSesion.js"></script>
+     <script src="/PowerZone/Views/assets/jss/bootstrap.bundle.min.js"></script>
+     <script src="/PowerZone/Views/assets/jss/main.js"></script>
+     <script src="/PowerZone/Views/funciones/cerrarSesion.js"></script>
      <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
      <script src="https://cdn.datatables.net/2.3.7/js/dataTables.bootstrap5.js"></script>';
 }

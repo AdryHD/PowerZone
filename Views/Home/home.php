@@ -1,10 +1,9 @@
 <?php
-// Evitar que el browser cachee páginas protegidas (impide volver atrás al login)
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/ProductoController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/ProductoController.php";
 
 $datosProductos = ConsultarProductos();
 $productosDestacados = [];
@@ -40,9 +39,7 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
     }
     ?>
 
-    <!-- Hero Section -->
     <section class="hero-section py-2" style="background: linear-gradient(135deg, #1A1A1A 0%, #000000 100%); position: relative; overflow: hidden;">
-      <!-- Background decoration -->
       <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: rgba(46, 204, 113, 0.1); border-radius: 50%; filter: blur(40px);"></div>
       <div style="position: absolute; bottom: -30px; left: -30px; width: 250px; height: 250px; background: rgba(46, 204, 113, 0.05); border-radius: 50%; filter: blur(40px);"></div>
       
@@ -67,7 +64,6 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
       </div>
     </section>
 
-    <!-- Categorías -->
     <section class="py-5" id="categorias" style="background: #FAFAFA;">
       <div class="container">
         <div class="text-center mb-5">
@@ -121,7 +117,6 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
       </div>
     </section>
 
-    <!-- Productos Destacados -->
     <section class="py-5" id="productos">
       <div class="container">
         <div class="text-center mb-5">
@@ -179,7 +174,6 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
       </div>
     </section>
 
-    <!-- Ofertas Especiales -->
     <section class="py-5" id="ofertas" style="background: linear-gradient(135deg, #1A1A1A 0%, #000000 100%); position: relative; overflow: hidden;">
       <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: rgba(46, 204, 113, 0.1); border-radius: 50%; filter: blur(40px);"></div>
       
@@ -188,7 +182,7 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
           <div class="card-body p-5 text-center" style="background: linear-gradient(135deg, #2ECC71 0%, #27a654 100%);">
             <h2 class="display-5 fw-bold mb-3" style="color: white; font-size: 2.5rem;">¡Ofertas Especiales del Mes!</h2>
             <p class="lead mb-4" style="color: rgba(255, 255, 255, 0.9); font-size: 1.15rem; font-weight: 500;">Aprovecha hasta 50% de descuento en productos seleccionados</p>
-            <a href="/G4_AmbienteWeb/Views/Producto/tienda.php?cat=99" class="btn btn-dark btn-lg" style="background: #1A1A1A; border: none; color: white; font-weight: 600; padding: 14px 32px; transition: all 0.3s ease;">
+            <a href="/PowerZone/Views/Producto/tienda.php?cat=99" class="btn btn-dark btn-lg" style="background: #1A1A1A; border: none; color: white; font-weight: 600; padding: 14px 32px; transition: all 0.3s ease;">
               <i class="lni lni-offer me-2"></i>Ver Todas las Ofertas
             </a>
           </div>
@@ -199,36 +193,7 @@ $productosDestacados = array_slice($productosDestacados, 0, 4);
     <?php MostrarFooter(); ?>
 
     <?php MostrarJS(); ?>
-    <script>
-      // Bloquear navegación hacia atrás: al presionar back se queda en home
-      history.pushState(null, '', location.href);
-      window.addEventListener('popstate', function() {
-        history.pushState(null, '', location.href);
-      });
-
-      function agregarAlCarrito(idProducto, nombre, btn) {
-          const original = btn.innerHTML;
-          btn.disabled = true;
-          btn.innerHTML = '<i class="lni lni-checkmark-circle me-1"></i>Agregado';
-          btn.style.background = 'linear-gradient(135deg,#27a654,#1a7a3f)';
-
-          fetch('/G4_AmbienteWeb/Controllers/CarritoController.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({action: 'agregar', id_producto: idProducto, cantidad: 1})
-          }).then(r => r.json())
-          .then(() => {
-            setTimeout(() => location.reload(), 700);
-          }).catch(()=>{})
-          .finally(() => {
-            setTimeout(() => {
-              btn.disabled = false;
-              btn.innerHTML = original;
-              btn.style.background = '#111';
-            }, 900);
-          });
-      }
-    </script>
+    <script src="../funciones/home.js"></script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/SeguridadController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/SeguridadController.php";
 
 $datosUsuario = ConsultarUsuario();
 ?>
@@ -16,7 +16,6 @@ $datosUsuario = ConsultarUsuario();
 
     <main class="main-wrapper" style="margin-left:0;">
 
-        <!-- Banner de perfil -->
         <div style="background: linear-gradient(135deg, #2ECC71 0%, #1A8A4A 100%); padding: 40px 0 60px;">
             <div class="container text-center text-white">
                 <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center mb-3"
@@ -43,7 +42,7 @@ $datosUsuario = ConsultarUsuario();
                                 . '</div>';
                             if ($tipoAlerta === 'success') {
                                 echo '<div class="d-grid mb-3">'
-                                    . '<a href="/G4_AmbienteWeb/Views/Home/home.php" class="btn btn-lg text-white fw-semibold" style="background:#1A8A4A;border:none;">'
+                                    . '<a href="/PowerZone/Views/Home/home.php" class="btn btn-lg text-white fw-semibold" style="background:#1A8A4A;border:none;">'
                                     . '<i class="lni lni-home me-2"></i>Ir a Inicio'
                                     . '</a></div>';
                             }
@@ -107,7 +106,7 @@ $datosUsuario = ConsultarUsuario();
                         </div>
 
                         <div class="text-center mt-3">
-                            <a href="/G4_AmbienteWeb/Views/Seguridad/cambiarAcceso.php" class="text-decoration-none" style="color:#2ECC71;">
+                            <a href="/PowerZone/Views/Seguridad/cambiarAcceso.php" class="text-decoration-none" style="color:#2ECC71;">
                                 <i class="lni lni-lock me-1"></i>Cambiar contraseña
                             </a>
                         </div>

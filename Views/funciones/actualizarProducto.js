@@ -1,6 +1,5 @@
 $(function () {
 
-    // Método custom: solo PNG, JPG o JPEG
     $.validator.addMethod("soloImagen", function (value, element) {
         if (element.files && element.files.length > 0) {
             return /\.(png|jpe?g)$/i.test(element.files[0].name);
@@ -8,7 +7,6 @@ $(function () {
         return true; // vacío permitido (imagen es opcional al actualizar)
     }, "Solo se permiten archivos PNG o JPG");
 
-    // Mostrar nombre del archivo seleccionado
     $("#ImagenProducto").on("change", function () {
         const nombreSpan  = $("#nombreArchivo");
         const feedbackImg = $("#feedbackImagen");
@@ -20,7 +18,6 @@ $(function () {
         }
     });
 
-    // Precio: solo números/punto, formatear a 2 decimales al salir
     $("#precio").on("input", function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ""));
     }).on("blur", function () {
@@ -30,12 +27,10 @@ $(function () {
         }
     });
 
-    // Stock: solo enteros positivos
     $("#stock").on("input", function () {
         $(this).val($(this).val().replace(/[^0-9]/g, ""));
     });
 
-    // Validación con jQuery Validate
     $("#formActualizarProducto").validate({
         rules: {
             id_categoria: {

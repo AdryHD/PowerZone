@@ -1,11 +1,15 @@
-function CerrarSesion() {
-    $.ajax({
-        url: '/G4_AmbienteWeb/Controllers/HomeController.php',
-        method: 'POST',
-        dataType: 'json',
-        data: { btnCerrarSesion: true },
-        success: function (response) {
-            window.location.href = '/G4_AmbienteWeb/Views/Home/inicio.php';
-        }
+document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('btnConfirmarCerrarSesion');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        $.ajax({
+            url: '/PowerZone/Controllers/HomeController.php',
+            method: 'POST',
+            dataType: 'json',
+            data: { btnCerrarSesion: true },
+            success: function () {
+                window.location.href = '/PowerZone/Views/Home/inicio.php';
+            }
+        });
     });
-};
+});

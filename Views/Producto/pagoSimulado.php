@@ -1,5 +1,5 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
 if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 <!DOCTYPE html>
@@ -17,22 +17,22 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <p class="text-muted small">Pago totalmente seguro</p>
             </div>
 
-            <form id="formSimularPago" class="needs-validation" novalidate>
+            <form id="formSimularPago" class="needs-validation" novalidate autocomplete="off">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Número de Tarjeta</label>
-                    <input type="text" id="numTarjeta" class="form-control" maxlength="16" placeholder="0000000000000000" required>
+                    <input type="text" id="numTarjeta" class="form-control" maxlength="19" placeholder="0000 0000 0000 0000" required autocomplete="off">
                     <div class="invalid-feedback">Ingrese los 16 dígitos de su tarjeta.</div>
                 </div>
 
                 <div class="row">
                     <div class="col-6 mb-3">
                         <label class="form-label fw-semibold">Expiración</label>
-                        <input type="text" id="expiracion" class="form-control" placeholder="MM/AA" maxlength="5" required>
+                        <input type="text" id="expiracion" class="form-control" placeholder="MM/AA" maxlength="5" required autocomplete="off">
                         <div class="invalid-feedback">Formato MM/AA.</div>
                     </div>
                     <div class="col-6 mb-3">
                         <label class="form-label fw-semibold">CVC</label>
-                        <input type="text" id="cvc" class="form-control" maxlength="3" placeholder="000" required>
+                        <input type="text" id="cvc" class="form-control" maxlength="3" placeholder="000" required autocomplete="off">
                         <div class="invalid-feedback">3 dígitos.</div>
                     </div>
                 </div>
@@ -48,6 +48,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 <?php MostrarFooter(); ?>
 <?php MostrarJS(); ?>
-<script src="/G4_AmbienteWeb/Views/funciones/pago.js"></script>
+<script src="/PowerZone/Views/funciones/pago.js"></script>
 </body>
 </html>

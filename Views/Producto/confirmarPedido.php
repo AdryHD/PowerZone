@@ -1,6 +1,6 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/CarritoController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/CarritoController.php";
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -78,31 +78,6 @@ if (!empty($items)) {
 <?php MostrarFooter(); ?>
 <?php MostrarJS(); ?>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const datos = JSON.parse(localStorage.getItem('datos_envio'));
-
-    if (!datos) {
-        alert('No hay información del pedido.');
-        window.location.href = 'carrito.php';
-        return;
-    }
-
-    // Mostrar los datos en la vista
-    document.getElementById('dispDireccion').innerText = datos.direccion;
-    document.getElementById('dispTelefono').innerText = datos.telefono;
-    document.getElementById('dispMetodo').innerText = datos.metodo_pago;
-    document.getElementById('dispNotas').innerText = datos.observaciones || 'Ninguna';
-
-    // Lógica del botón final
-    document.getElementById('btnPasoFinal').addEventListener('click', function() {
-        if (datos.metodo_pago === 'Tarjeta') {
-            window.location.href = '/G4_AmbienteWeb/Views/Producto/pagoSimulado.php';
-        } else {
-            window.location.href = '/G4_AmbienteWeb/Views/Producto/transferencia.php';
-        }
-    });
-});
-</script>
+<script src="../funciones/confirmarPedido.js"></script>
 </body>
 </html>

@@ -1,6 +1,11 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Controllers/PedidoController.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Controllers/PedidoController.php";
+
+if (!isset($_SESSION["usuario_rol"]) || $_SESSION["usuario_rol"] != 1) {
+    header("Location: /PowerZone/Views/Home/home.php");
+    exit;
+}
 
 $idPedido = $_GET["id"] ?? null;
 $datos = ConsultarPedido($idPedido);
@@ -15,11 +20,10 @@ if ($idPedido === null && !empty($datos)) {
     }
 }
 
-// Función auxiliar para determinar el color del badge según el estado
 function obtenerColorEstado($estado) {
     switch (strtolower($estado)) {
         case 'pendiente': return 'bg-warning text-dark';
-        case 'empacado':  return 'bg-info text-dark';
+        case 'procesando': return 'bg-info text-dark';
         case 'enviado':   return 'bg-success';
         default:          return 'bg-secondary';
     }
@@ -94,18 +98,17 @@ function obtenerColorEstado($estado) {
     <input type="hidden" name="idPedido" value="<?php echo $idPedido; ?>">
     
     <div class="d-grid gap-2">
-        <?php 
-        // Limpiamos el estado de espacios y lo pasamos a minúsculas para comparar
-        $estadoActual = trim(strtolower($datos[0]['Estado'])); 
+        <?php
+        $estadoActual = trim(strtolower($datos[0]['Estado']));
         ?>
 
         <?php if ($estadoActual == 'pendiente'): ?>
-            <input type="hidden" name="nuevoEstado" value="empacado">
+            <input type="hidden" name="nuevoEstado" value="procesando">
             <button type="submit" name="btnCambiarEstado" class="btn btn-warning py-2">
-                <i class="lni lni-package me-2"></i>Pasar a EMPACADO
+                <i class="lni lni-package me-2"></i>Pasar a PROCESANDO
             </button>
 
-        <?php elseif ($estadoActual == 'empacado'): ?>
+        <?php elseif ($estadoActual == 'procesando'): ?>
             <input type="hidden" name="nuevoEstado" value="enviado">
             <button type="submit" name="btnCambiarEstado" class="btn btn-success py-2">
                 <i class="lni lni-delivery me-2"></i>Pasar a ENVIADO
@@ -177,5 +180,6 @@ function obtenerColorEstado($estado) {
 </main>
 
 <?php MostrarFooter(); ?>
+<?php MostrarJS(); ?>
 </body>
 </html>

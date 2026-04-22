@@ -1,5 +1,5 @@
 <?php
-include_once $_SERVER["DOCUMENT_ROOT"] . "/G4_AmbienteWeb/Views/layout.php";
+include_once $_SERVER["DOCUMENT_ROOT"] . "/PowerZone/Views/layout.php";
 if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 <!DOCTYPE html>
@@ -57,6 +57,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 <?php MostrarFooter(); ?>
 <?php MostrarJS(); ?>
-<script src="/G4_AmbienteWeb/Views/funciones/transferencia.js"></script>
+<script src="/PowerZone/Views/funciones/transferencia.js"></script>
 </body>
 </html>

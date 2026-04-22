@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const contrasena  = document.getElementById('Contrasenna');
     const confirmar   = document.getElementById('ConfirmarContrasenna');
 
-    // ── Validación al enviar ──────────────────────────────────────
     form.addEventListener('submit', function (e) {
         if (contrasena && confirmar && contrasena.value !== confirmar.value) {
             confirmar.setCustomValidity('Las contraseñas no coinciden');
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
         form.classList.add('was-validated');
     });
 
-    // ── Validación en tiempo real ─────────────────────────────────
     if (confirmar) {
         confirmar.addEventListener('input', function () {
             if (contrasena && this.value !== contrasena.value) {
